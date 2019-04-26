@@ -8,9 +8,10 @@ namespace two_way_list
 {
     class List<Type>
     {
-        Element head=null;
-        Element last = null;
+        public Element Head { get; private set; }
+        public Element Last { get; private set; }
         private int itemscoutner;
+        public List() { Head =Last= null; }
         public class Element
         {
             public Element next, prev;
@@ -22,30 +23,71 @@ namespace two_way_list
                 this.data = data;
             }
         }
-        void InsertFront(Type data)
+        public void InsertFront(Type data)
         {
             Element newNode = new Element(data);
-            newNode.next = head;
+            newNode.next = Head;
             newNode.prev = null;
-            if (head != null)
+            if (Head != null)
             {
-                head.prev = newNode;
+                Head.prev = newNode;
             }
-            head = newNode;
+            Head = newNode;
         }
-
-        internal void InsertLast( Type data)
+        public void InsertAfter(Element actual, Type data)
         {
-            Element newNode = new Element(data);
-            if (head == null)
+            if (actual == null)
             {
-                newNode.prev = null;
-                head = newNode;
+                Console.WriteLine("Podełeś nieziainicjalizowany element");
                 return;
             }
-            Element lastNode =last;
+            Element newNode = new Element(data);
+            newNode.next = actual.next;
+            actual.next = newNode;
+            newNode.prev = actual;
+            if (newNode.next != null)
+            {
+                newNode.next.prev = newNode;
+            }
+        }
+        public void InsertLast( Type data)
+        {
+            Element newNode = new Element(data);
+            if (Head == null)
+            {
+                newNode.prev = null;
+                Head = newNode;
+                return;
+            }
+            Element lastNode =Last;
             lastNode.next = newNode;
             newNode.prev = lastNode;
+        }
+        public void DeleteNodebyKey( Type key)
+        {
+            Element temp = Head;
+            if (temp != null && temp.data.Equals(key))
+            {
+                Head = temp.next;
+                Head.prev = null;
+                return;
+            }
+            while (temp != null && !temp.data.Equals(key))
+            {
+                temp = temp.next;
+            }
+            if (temp == null)
+            {
+                return;
+            }
+            if (temp.next != null)
+            {
+                temp.next.prev = temp.prev;
+            }
+            if (temp.prev != null)
+            {
+                temp.prev.next = temp.next;
+            }
         }
 
     }
