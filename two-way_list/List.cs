@@ -6,16 +6,28 @@ using System.Threading.Tasks;
 
 namespace two_way_list
 {
-    class List<Type>
+    public class List<Type>
     {
         public Element Head { get; private set; }
         public Element Last { get; private set; }
-        private int itemscoutner;
+        public Element Iteratorforward;
+        public Element Iteratorbackward;
+
+        public int ItemCounter { get; private set; }
         public List() { Head =Last= null; }
         public class Element
         {
             public Element next, prev;
             public Type data { get; set; }
+
+            public static Element operator ++(Element actual)
+            {
+                return actual.next;
+            }
+            public static Element operator --(Element actual)
+            {
+                return actual.prev;
+            }
             public Element(Type data)
             {
                 this.next = null;
@@ -26,13 +38,26 @@ namespace two_way_list
         public void InsertFront(Type data)
         {
             Element newNode = new Element(data);
-            newNode.next = Head;
-            newNode.prev = null;
+            if (Head == null)
+            {
+                Head = newNode;
+
+                if (Last == null)
+                {
+                    Last = newNode;
+                }
+                ItemCounter++;
+                return;
+            }
             if (Head != null)
             {
-                Head.prev = newNode;
+                Element first_node = Head;
+                Head = newNode;
+                Head.next = first_node;
+                first_node.prev = Head;
             }
-            Head = newNode;
+
+            ItemCounter++;
         }
         public void InsertAfter(Element actual, Type data)
         {
@@ -49,45 +74,83 @@ namespace two_way_list
             {
                 newNode.next.prev = newNode;
             }
+            else { Last = newNode; }
+            ItemCounter++;
         }
         public void InsertLast( Type data)
         {
+            ItemCounter++;
             Element newNode = new Element(data);
             if (Head == null)
             {
                 newNode.prev = null;
                 Head = newNode;
+                Last = newNode;
                 return;
             }
             Element lastNode =Last;
             lastNode.next = newNode;
             newNode.prev = lastNode;
+            Last = newNode;
         }
         public void DeleteNodebyKey( Type key)
         {
-            Element temp = Head;
-            if (temp != null && temp.data.Equals(key))
+            Element actual = Head;
+            if (actual != null && actual.data.Equals(key))
             {
-                Head = temp.next;
+                Head = actual.next;
                 Head.prev = null;
+                if (actual == Last)
+                    Last = actual.prev;///null
+                ItemCounter--;
                 return;
             }
-            while (temp != null && !temp.data.Equals(key))
+
+            while (actual != null && !actual.data.Equals(key))
             {
-                temp = temp.next;
+                actual = actual.next;
             }
-            if (temp == null)
+            if (actual == null)
             {
                 return;
             }
-            if (temp.next != null)
+            if (actual.next != null)
             {
-                temp.next.prev = temp.prev;
+                actual.next.prev = actual.prev;
             }
-            if (temp.prev != null)
+            else////UWaga
             {
-                temp.prev.next = temp.next;
+                Last=actual.prev;
             }
+            if (actual.prev != null)
+            {
+                actual.prev.next = actual.next;
+            }
+            else
+            {
+                Head = actual.next;
+            }
+
+            ItemCounter--;
+        }
+        public void DeleteThisNode(Element actual)
+        {
+            if (actual == null)
+                return;
+            if (actual == Last)
+                Last = actual.prev;
+            if (actual == Head)
+                Head = actual.next;
+
+            if (actual.next != null)
+            {
+                actual.next.prev = actual.prev;
+            }
+            if (actual.prev != null)
+            {
+                actual.prev.next = actual.next;
+            }
+            ItemCounter--;
         }
 
     }

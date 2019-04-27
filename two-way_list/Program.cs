@@ -11,9 +11,12 @@ namespace two_way_list
         static void Main(string[] args)
         {
             List<int> lista = new List<int>();
-            lista.InsertFront(5);
-            lista.InsertFront(6);
-            lista.InsertFront(7);
+            lista.InsertLast(5);
+            lista.InsertLast(6);
+            lista.InsertLast(7);
+            lista.Iteratorforward = lista.Head;
+            lista.Iteratorforward++;
+            Console.WriteLine(lista.Iteratorforward.data);
             Console.WriteLine(lista.Last.data);
             Console.ReadKey();
         }
